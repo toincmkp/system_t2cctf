@@ -31,6 +31,7 @@
 PCのスペック次第では 3D の処理自体が厳しいため T2CCTF では先の 3D の可視化システムのみ除いたページも用意しました。  
 ![challenges](https://raw.githubusercontent.com/totti-t2cctf/other_t2cctf/master/imgs/challenges.png)  
 
+
 またユーザーやチームなどの登録やセッション管理等も Node.js によって実装しています。  
 簡易的なスコア表示ページも用意していました。  
 ![scoreboard](https://raw.githubusercontent.com/totti-t2cctf/other_t2cctf/master/imgs/scoreboard.png)  
