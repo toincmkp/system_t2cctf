@@ -84,10 +84,10 @@ $ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
 $ echo "deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.0.list
 $ sudo apt-get install -y mongodb-org
 $ sudo apt-get install git
-$ mkdir node_server
-$ cd node_server
-$ git clone https://github.com/totti-t2cctf/p_system_t2cctf.git
-$ cd p_system_t2cctf
+$ mkdir t2cctf_server
+$ cd t2cctf_server
+$ git clone https://github.com/totti-t2cctf/system_t2cctf.git
+$ cd system_t2cctf
 $ npm install mongodb
 $ npm install cookie
 $ npm install socket.io
