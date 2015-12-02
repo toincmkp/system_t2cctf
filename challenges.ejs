@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <title>Challenges</title>
+        <link rel="stylesheet" href="css/threedboard.css">
+        <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+    </head>
+
+<body>
+    <script src="js/jquery-1.11.2.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <nav class="navbar navbar-default">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="">T2C CTF</a>
+        </div>
+        <ul class="nav navbar-nav navbar-left">
+            <li><a id="nav_threedboard" href="/threedboard"></a></li>
+            <li class="active"><a id="nav_challenges"></a></li>
+            <li><a id="nav_scoreboard" href="/scoreboard"></a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right" style="margin-right: 10px">
+            <li><a id="yourteam"></a></li>
+            <li><a id="yourteampoint"></a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </nav>
+
+    <div style="text-align: center; margin: 20px">
+        <img src="imgs/challenges.png">
+    </div>
+
+    <div class="container" style="padding: 20px 0">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr><th>#</th><th><i class="glyphicon glyphicon-pencil"></i></th><th>Title</th><th>Category</th><th>Point</th></tr>
+            </thead>
+            <tbody>
+
+                <tr id="q1" class="modalclick"><td>1</td><td id="q1check"></td><td>練習問題</td><td id="q1genre">Miscellaneous</td><td id="q1point">10</td></tr>
+                <div class="modal fade" id="q1Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>練習問題</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>VDJDQ1RGe1czbGMwbTNfdDBfVDJDQ1RGIX0=</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q1resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q1input" class="enter">
+                                    <button type="submit" id="q1send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q2" class="modalclick"><td>2</td><td id="q2check"></td><td>Decode me (Lv.1)</td><td id="q2genre">Cryptography</td><td id="q2point">50</td></tr>
+                <div class="modal fade" id="q2Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>Decode me(Level.1)</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>**********</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q2resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q2input" class="enter">
+                                    <button type="submit" id="q2send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q3" class="modalclick"><td>3</td><td id="q3check"></td><td>Decode me (Lv.91)</td><td id="q3genre">Cryptography</td><td id="q3point">110</td></tr>
+                <div class="modal fade" id="q3Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>Decode me(Level.91)</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>**********</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q3resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q3input" class="enter">
+                                    <button type="submit" id="q3send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q4" class="modalclick"><td>4</td><td id="q4check"></td><td>The file cries wolf</td><td id="q4genre">Forensics</td><td id="q4point">50</td></tr>
+                <div class="modal fade" id="q4Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>The file cries wolf</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p><a href="/qfiles/flag.doc">flag.doc</a></p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q4resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q4input" class="enter">
+                                    <button type="submit" id="q4send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q5" class="modalclick"><td>5</td><td id="q5check"></td><td>ROT-13</td><td id="q5genre">Cryptography</td><td id="q5point">50</td></tr>
+                <div class="modal fade" id="q5Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>ROT-13</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>**********</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q5resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q5input" class="enter">
+                                    <button type="submit" id="q5send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q6" class="modalclick"><td>6</td><td id="q6check"></td><td>ご注文は◯◯◯ですか？</td><td id="q6genre">Web</td><td id="q6point">120</td></tr>
+                <div class="modal fade" id="q6Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>ご注文は◯◯◯ですか？</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>**********</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q6resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q6input" class="enter">
+                                    <button type="submit" id="q6send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q7" class="modalclick"><td>7</td><td id="q7check"></td><td>WWW-Authenticate</td><td id="q7genre">Web</td><td id="q7point">110</td></tr>
+                <div class="modal fade" id="q7Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>WWW-Authenticate</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>**********</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q7resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q7input" class="enter">
+                                    <button type="submit" id="q7send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q8" class="modalclick"><td>8</td><td id="q8check"></td><td>今持ってる？</td><td id="q8genre">Web</td><td id="q8point">150</td></tr>
+                <div class="modal fade" id="q8Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>今持ってる？</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>**********</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q8resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q8input" class="enter">
+                                    <button type="submit" id="q8send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q9" class="modalclick"><td>9</td><td id="q9check"></td><td>Text-based protocol</td><td id="q9genre">Network</td><td id="q9point">150</td></tr>
+                <div class="modal fade" id="q9Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>Text-based protocol</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>**********</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q9resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q9input" class="enter">
+                                    <button type="submit" id="q9send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q10" class="modalclick"><td>10</td><td id="q10check"></td><td>らくだ本と言えば…</td><td id="q10genre">Miscellaneous</td><td id="q10point">120</td></tr>
+                <div class="modal fade" id="q10Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>らくだ本と言えば…</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>**********</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q10resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q10input" class="enter">
+                                    <button type="submit" id="q10send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q11" class="modalclick"><td>11</td><td id="q11check"></td><td>x86読んでみよう</td><td id="q11genre">Binary</td><td id="q11point">150</td></tr>
+                <div class="modal fade" id="q11Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>x86読んでみよう</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>以下のアセンブリ言語から printf で表示される数を答えてください</p>
+                                    <div style="text-align: center;">
+                                        <img src="qfiles/x86.png">
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q11resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q11input" class="enter">
+                                    <button type="submit" id="q11send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q12" class="modalclick"><td>12</td><td id="q12check"></td><td>パスワードは何？</td><td id="q12genre">Binary</td><td id="q12point">250</td></tr>
+                <div class="modal fade" id="q12Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>パスワードは何？</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>**********</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q12resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q12input" class="enter">
+                                    <button type="submit" id="q12send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q13" class="modalclick"><td>13</td><td id="q13check"></td><td>ここはどこ？</td><td id="q13genre">Forensics</td><td id="q13point">60</td></tr>
+                <div class="modal fade" id="q13Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>ここはどこ？</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>**********</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q13resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q13input" class="enter">
+                                    <button type="submit" id="q13send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q14" class="modalclick"><td>14</td><td id="q14check"></td><td>削除されたフォルダ名は何？</td><td id="q14genre">Forensics</td><td id="q14point">300</td></tr>
+                <div class="modal fade" id="q14Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>削除されたフォルダ名は何？</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>**********</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q14resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q14input" class="enter">
+                                    <button type="submit" id="q14send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q15" class="modalclick"><td>15</td><td id="q15check"></td><td>Tell me the CVE-number</td><td id="q15genre">Miscellaneous</td><td id="q15point">150</td></tr>
+                <div class="modal fade" id="q15Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>Tell me the CVE-number</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>**********</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q15resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q15input" class="enter">
+                                    <button type="submit" id="q15send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q16" class="modalclick"><td>16</td><td id="q16check"></td><td>QR猫ード</td><td id="q16genre">Forensics</td><td id="q16point">200</td></tr>
+                <div class="modal fade" id="q16Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>QR猫ード</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>**********</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q16resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q16input" class="enter">
+                                    <button type="submit" id="q16send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q17" class="modalclick"><td>17</td><td id="q17check"></td><td>Programming and morus</td><td id="q17genre">Programming</td><td id="q17point">220</td></tr>
+                <div class="modal fade" id="q17Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>Programming and morus</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>**********</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q17resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q17input" class="enter">
+                                    <button type="submit" id="q17send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q18" class="modalclick"><td>18</td><td id="q18check"></td><td>Merry -sX'mas!</td><td id="q18genre">Network</td><td id="q18point">200</td></tr>
+                <div class="modal fade" id="q18Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>Merry -sX'mas!</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>**********</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q18resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q18input" class="enter">
+                                    <button type="submit" id="q18send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q19" class="modalclick"><td>19</td><td id="q19check"></td><td>美しき策謀</td><td id="q19genre">Binary</td><td id="q19point">300</td></tr>
+                <div class="modal fade" id="q19Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>美しき策謀</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>**********</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q19resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q19input" class="enter">
+                                    <button type="submit" id="q19send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q20" class="modalclick"><td>20</td><td id="q20check"></td><td>Net stalker</td><td id="q20genre">Reconnaissance</td><td id="q20point">100</td></tr>
+                <div class="modal fade" id="q20Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>Net stalker</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>**********</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q20resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q20input" class="enter">
+                                    <button type="submit" id="q20send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q21" class="modalclick"><td>21</td><td id="q21check"></td><td>Offensive Security</td><td id="q21genre">Trivia</td><td id="q21point">50</td></tr>
+                <div class="modal fade" id="q21Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>Offensive Security</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>**********</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q21resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q21input" class="enter">
+                                    <button type="submit" id="q21send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q22" class="modalclick"><td>22</td><td id="q22check"></td><td>Intelligence Gathering</td><td id="q22genre">Trivia</td><td id="q22point">50</td></tr>
+                <div class="modal fade" id="q22Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>Intelligence Gathering</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>**********</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q22resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q22input" class="enter">
+                                    <button type="submit" id="q22send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q23" class="modalclick"><td>23</td><td id="q23check"></td><td>Stack-Smashing Protection</td><td id="q23genre">Trivia</td><td id="q23point">50</td></tr>
+                <div class="modal fade" id="q23Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>Stack-Smashing Protection</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Visual C++のコンパイラでは, BOF（バッファ・オーバーフロー）対策としてBOFを検知するための値を用いるが, この値はなんと呼ばれている？</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q23resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q23input" class="enter">
+                                    <button type="submit" id="q23send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+            </tbody>
+        </table>
+
+        <p><span class="glyphicon glyphicon-flag"></span>　 あなたが一番最初に問題を解きました！</p>
+        <p><span class="glyphicon glyphicon-thumbs-up"></span>　 あなたが問題を解きました！</p>
+        <p><span class="glyphicon glyphicon glyphicon-ok"></span> 　チームメイトが問題を解きました！</p>
+        <p><span class="glyphicon glyphicon-exclamation-sign"></span> 　他チームが問題を解きました！</p>
+
+    </div>
+
+    <script>
+        $(function() {
+
+            var socket = io.connect();
+            var questionscount = 23;
+
+            // ---------------------------------------------------------------------
+            // Teams & Personal Initiation
+            // ---------------------------------------------------------------------
+            var teamlist = <%- JSON.stringify(ejsteamlist) %>;
+            var usersdatalist = <%- JSON.stringify(ejsusersdata) %>;
+            var answerloglist = <%- JSON.stringify(ejsanslog) %>;
+            var yourdatalist = <%- JSON.stringify(ejsyourdata) %>;
+
+            // ----------------------------------------
+            // Teams & Personal Initiation
+            // ---------------------------------------------------------------------
+            // Setting Users By Teams
+            // ---------------------------------------------------------------------
+            var teamuserlist = [];
+            var temp = [];
+            for (i=0; i<teamlist.length; i++) {
+                for (j=0; j<usersdatalist.length; j++) {
+                    if (teamlist[i] == usersdatalist[j].teamID) {
+                        temp.push(usersdatalist[j]);
+                    }
+                }
+                teamuserlist.push(temp);
+                temp = [];
+            }
+
+            // ----------------------------------------
+            // Teams & Personal Initiation
+            // ---------------------------------------------------------------------
+            // Setting Each Team Point
+            // ---------------------------------------------------------------------
+            var teampointlist = [];
+            for (i=0; i < teamlist.length; i++) {
+                teampointlist[teamlist[i]] = 0;
+
+                for (j=0; j < teamuserlist[i].length; j++) {
+                    teampointlist[teamlist[i]] += teamuserlist[i][j].point;
+                }
+            }
+
+            // ----------------------------------------
+            // Teams & Personal Initiation
+            // ---------------------------------------------------------------------
+            // Rendering Personal Inoformation
+            // ---------------------------------------------------------------------
+            var tempyourteam = "teamID : " + yourdatalist[2];
+            $('#yourteam').text(tempyourteam);
+            $('#yourteampoint').text(String(teampointlist[yourdatalist[2]]) + "pt");
+
+            $('#nav_threedboard').text("threedboard");
+            $('#nav_challenges').text("challenges");
+            $('#nav_scoreboard').text("scoreboard");
+
+            // -------------------------------------------------------------------------------------------------------
+            // These are important things
+            // -------------------------------------------------------------------------------------------------------
+            // teamlist = ["team1", "team2", "team3", ...];
+            // teamuserlist = [[user1_object, user2_object, ...], [user1_object, ...], [...], ...];
+            // teampointlist = [team1: point, team2: point, ...];
+            // yourdatalist = [userID, point, teamID];
+            // -------------------------------------------------------------------------------------------------------
+
+            // ---------------------------------------------------------------------
+            // Gliphicon Rendering
+            // ---------------------------------------------------------------------
+            for (i=1; i < questionscount + 1; i++) {
+                var tempcheckqid = "#q" + i + "check";
+                var tempchecknum = "q" + i;
+
+                var tempcheckqidlist = [];
+                for (j=0; j < answerloglist.length; j++) {
+                    if (tempchecknum == answerloglist[j].qID) {
+                        tempcheckqidlist.push(answerloglist[j]);
+                    }
+                }
+
+                for (j=0; j < tempcheckqidlist.length; j++) {
+                    if (j == 0) {
+                        if (tempcheckqidlist[0].userID == yourdatalist[0]) {
+                            $(tempcheckqid).html('<i class="glyphicon glyphicon-flag"></i>');
+                            $(tempcheckqid).hide();
+                            $(tempcheckqid).fadeIn();
+                            break;
+                        }
+                        else if (tempcheckqidlist[j].userID != yourdatalist[0] && tempcheckqidlist[j].teamID == yourdatalist[2]) {
+                            $(tempcheckqid).html('<i class="glyphicon glyphicon-ok"></i>');
+                            $(tempcheckqid).hide();
+                            $(tempcheckqid).fadeIn();
+                            break;
+                        }
+                        else {
+                            $(tempcheckqid).html('<i class="glyphicon glyphicon-exclamation-sign"></i>');
+                            $(tempcheckqid).hide();
+                            $(tempcheckqid).fadeIn();
+                        }
+
+                    }
+                    else {
+                        if (tempcheckqidlist[j].userID == yourdatalist[0]) {
+                            $(tempcheckqid).html('<i class="glyphicon glyphicon-thumbs-up"></i>');
+                            $(tempcheckqid).hide();
+                            $(tempcheckqid).fadeIn();
+                            break;
+                        }
+                        else if (tempcheckqidlist[j].userID != yourdatalist[0] && tempcheckqidlist[j].teamID == yourdatalist[2]) {
+                            $(tempcheckqid).html('<i class="glyphicon glyphicon-ok"></i>');
+                            $(tempcheckqid).hide();
+                            $(tempcheckqid).fadeIn();
+                            break;
+                        }
+                        else {
+                            $(tempcheckqid).html('<i class="glyphicon glyphicon-exclamation-sign"></i>');
+                            $(tempcheckqid).hide();
+                            $(tempcheckqid).fadeIn();
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // ----------------------------------------------------------------------
+            // Setting Genrelist By QuesitonID & Replacing words
+            // ----------------------------------------------------------------------
+            var genrelist = [-1];
+            var str = "";
+            for (i=1; i<questionscount+1; i++) {
+                str = "#q" + i + "genre";
+                str = $(str).text();
+
+                if (str == "Cryptography") {
+                    str = "Crypto";
+                }
+                else if (str == "Steganography") {
+                    str = "Stego";
+                }
+                else if (str == "Binary") {
+                    str = "Bin";
+                }
+                else if (str == "Programming") {
+                    str = "Prog";
+                }
+                else if (str == "Miscellaneous") {
+                    str = "Misc";
+                }
+                else if (str == "Network") {
+                    str = "Net";
+                }
+                else if (str == "Reconnaissance") {
+                    str = "Recon";
+                }
+
+                genrelist.push(str);
+            }
+
+            // ------------------------------------------
+            // Setting Pointlist By QuesitonID
+            // ------------------------------------------
+            var pointlist = [-1];
+            var str = "";
+            for (i=1; i<questionscount+1; i++) {
+                str = "#q" + i + "point";
+                str = $(str).text();
+                pointlist.push(str);
+            }
+
+            // -------------------------------------------------------------------------
+            // Setting Genrelist & QuestionID By Each QuestionBoard
+            // -------------------------------------------------------------------------
+            var genrelist_first = [];
+            var genrelist_second = [];
+            var genrelist_third = [];
+
+            var under100idlist = [];
+            var under200idlist = [];
+            var under300idlist = [];
+
+            for (i=1; i<questionscount+1; i++) {
+                if (Number(pointlist[i]) < 100) {
+                    genrelist_first.push(genrelist[i]);
+                    under100idlist.push(i);
+                }
+                else if (100 <= Number(pointlist[i]) && Number(pointlist[i]) < 200) {
+                    genrelist_second.push(genrelist[i]);
+                    under200idlist.push(i);
+                }
+                else {
+                    genrelist_third.push(genrelist[i]);
+                    under300idlist.push(i);
+                }
+            }
+
+            // ----------------------------------------
+            // Each Question Count
+            // ----------------------------------------
+            var questionpanel_firstcount = genrelist_first.length;
+            var questionpanel_secondcount = genrelist_second.length;
+            var questionpanel_thirdcount = genrelist_third.length;
+
+
+            // ---------------------------------------------------------------------
+            // Actions
+            // ---------------------------------------------------------------------
+            var idnameModal = "";
+            $('.modalclick').on('click', function() {
+                idnameModal = $(this).attr("id");
+                idnameModal = "#" + idnameModal + "Modal";
+                $(idnameModal).modal();
+            });
+
+            var idnameflagSend = "";
+            var inputtext = "";
+            $('.flagSend').on('click', function() {
+                idnameflagSend = $(this).attr("id");
+                idnameflagSend = idnameflagSend.replace("send", "");
+                inputtext = "#" + idnameflagSend + "input";
+                inputtext = $(inputtext).val();
+
+                if (inputtext) {
+                    inputtext = yourdatalist[0] + ":" + yourdatalist[2] + ":" + idnameflagSend+ ":" + inputtext;
+                    console.log(inputtext);
+                    socket.emit("flagdata", inputtext);
+                }
+                else {
+                    console.log("empty");
+                }
+            });
+
+            $('.enter').keypress(function(e){
+                if(e.which == 13){
+                    idnameflagSend = "#" + $(this).attr("id");
+                    inputtext = $(idnameflagSend).val();
+                    idname = $(this).attr("id").replace("input", "");
+
+                    if (inputtext) {
+                        inputtext = yourdatalist[0] + ":" + yourdatalist[2] + ":" + idname + ":" + inputtext;
+                        console.log(inputtext);
+                        socket.emit("flagdata", inputtext);
+                    }
+                    else {
+                        alert("empty");
+                    }
+                }
+            });
+
+            var flagresult_jq = "";
+            socket.on("flagresulttext", function(data){
+
+                flagresult_jq = "#" + data[2] + "resulttext";
+                if (data[1] == 0) {
+                    $(flagresult_jq).text(data[0]);
+                    $(flagresult_jq).css('color', 'red');
+                    $(flagresult_jq).hide();
+                    $(flagresult_jq).fadeIn();
+                }
+                else {
+                    $(flagresult_jq).text(data[0]);
+                    $(flagresult_jq).css('color', 'green');
+                    $(flagresult_jq).hide();
+                    $(flagresult_jq).fadeIn();
+                }
+            });
+
+            socket.on("gliphiconIn", function(data) {
+                console.log(data);
+                var tempglistr = "#" + data[0] + "check";
+                var tempgli = $(tempglistr).html();
+                if (tempgli) {
+                    if (tempgli == '<i class="glyphicon glyphicon-exclamation-sign"></i>') {
+                        if (yourdatalist[0] == data[1]) {
+                            $(tempglistr).html('<i class="glyphicon glyphicon-thumbs-up"></i>');
+                            $(tempglistr).hide();
+                            $(tempglistr).fadeIn();
+                        }
+                        else if (yourdatalist[0] != data[1] && yourdatalist[2] == data[2]) {
+                            $(tempglistr).html('<i class="glyphicon glyphicon-ok"></i>');
+                            $(tempglistr).hide();
+                            $(tempglistr).fadeIn();
+                        }
+                    }
+                }
+                else {
+                    if (yourdatalist[0] == data[1]) {
+                        $(tempglistr).html('<i class="glyphicon glyphicon-flag"></i>');
+                        $(tempglistr).hide();
+                        $(tempglistr).fadeIn();
+                    }
+                    else if (yourdatalist[0] != data[1] && yourdatalist[2] == data[2]) {
+                        $(tempglistr).html('<i class="glyphicon glyphicon-ok"></i>');
+                        $(tempglistr).hide();
+                        $(tempglistr).fadeIn();
+                    }
+                    else {
+                        $(tempglistr).html('<i class="glyphicon glyphicon-exclamation-sign"></i>');
+                        $(tempglistr).hide();
+                        $(tempglistr).fadeIn();
+                    }
+                }
+            });
+
+            socket.on("pointModify", function(data) {
+                console.log(data);
+                teampointlist[data[1]] += data[3];
+                console.log(teampointlist[data[1]]);
+
+                if (yourdatalist[2] == data[1]) {
+                    $('#yourteampoint').fadeOut(1000, function(){
+                        $('#yourteampoint').text(String(teampointlist[yourdatalist[2]]) + "pt");
+                        $('#yourteampoint').fadeIn(1000);
+                    });
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>

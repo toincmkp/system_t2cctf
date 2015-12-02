@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <title>Scoreboard</title>
+        <link rel="stylesheet" href="css/threedboard.css">
+        <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+    </head>
+
+<body>
+    <script src="js/jquery-1.11.2.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+
+    <nav class="navbar navbar-default">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="">T2C CTF</a>
+        </div>
+        <ul class="nav navbar-nav navbar-left">
+            <li><a id="nav_threedboard" href="/threedboard"></a></li>
+            <li><a id="nav_challenges" href="/challenges"></a></li>
+            <li class="active"><a id="nav_scoreboard"></a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right" style="margin-right: 10px">
+            <li><a id="yourteam"></a></li>
+            <li><a id="yourteampoint"></a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </nav>
+
+    <div style="text-align: center; margin: 20px">
+        <img src="imgs/scoreboard.png">
+    </div>
+
+    <div class="container" style="padding: 20px 0">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr><th>Rank</th><th>TeamID</th><th>Point</th><th>#1</th><th>#2</th><th>#3</th><th>#4</th><th>#5</th><th>#6</th><th>#7</th><th>#8</th><th>#9</th><th>#10</th><th>#11</th><th>#12</th><th>#13</th><th>#14</th><th>#15</th><th>#16</th><th>#17</th><th>#18</th><th>#19</th><th>#20</th><th>#21</th><th>#22</th><th>#23</th></tr>
+            </thead>
+            <tbody>
+                <tr id="row0"></tr>
+                <tr id="row1"></tr>
+                <tr id="row2"></tr>
+                <tr id="row3"></tr>
+                <tr id="row4"></tr>
+                <tr id="row5"></tr>
+                <tr id="row6"></tr>
+                <tr id="row7"></tr>
+                <tr id="row8"></tr>
+                <tr id="row9"></tr>
+                <tr id="row10"></tr>
+                <tr id="row11"></tr>
+                <tr id="row12"></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        $(function() {
+
+            var questionscount = 23;
+
+            // ---------------------------------------------------------------------
+            // Teams & Personal Initiation
+            // ---------------------------------------------------------------------
+            var teamlist = <%- JSON.stringify(ejsteamlist) %>;
+            var usersdatalist = <%- JSON.stringify(ejsusersdata) %>;
+            var answerloglist = <%- JSON.stringify(ejsanslog) %>;
+            var yourdatalist = <%- JSON.stringify(ejsyourdata) %>;
+
+            // ----------------------------------------
+            // Teams & Personal Initiation
+            // ---------------------------------------------------------------------
+            // Setting Users By Teams
+            // ---------------------------------------------------------------------
+            var teamuserlist = [];
+            var temp = [];
+            for (i=0; i<teamlist.length; i++) {
+                for (j=0; j<usersdatalist.length; j++) {
+                    if (teamlist[i] == usersdatalist[j].teamID) {
+                        temp.push(usersdatalist[j]);
+                    }
+                }
+                teamuserlist.push(temp);
+                temp = [];
+            }
+
+            // ----------------------------------------
+            // Teams & Personal Initiation
+            // ---------------------------------------------------------------------
+            // Setting Each Team Point
+            // ---------------------------------------------------------------------
+            var teampointlist = [];
+            for (i=0; i < teamlist.length; i++) {
+                teampointlist[teamlist[i]] = 0;
+
+                for (j=0; j < teamuserlist[i].length; j++) {
+                    teampointlist[teamlist[i]] += teamuserlist[i][j].point;
+                }
+            }
+
+            // ----------------------------------------
+            // Teams & Personal Initiation
+            // ---------------------------------------------------------------------
+            // Rendering Personal Inoformation
+            // ---------------------------------------------------------------------
+            var tempyourteam = "teamID : " + yourdatalist[2];
+            $('#yourteam').text(tempyourteam);
+            $('#yourteampoint').text(String(teampointlist[yourdatalist[2]]) + "pt");
+
+            $('#nav_threedboard').text("threedboard");
+            $('#nav_challenges').text("challenges");
+            $('#nav_scoreboard').text("scoreboard");
+
+            // -------------------------------------------------------------------------------------------------------
+            // These are important things
+            // -------------------------------------------------------------------------------------------------------
+            // teamlist = ["team1", "team2", "team3", ...];
+            // teamuserlist = [[user1_object, user2_object, ...], [user1_object, ...], [...], ...];
+            // teampointlist = [team1: point, team2: point, ...];
+            // yourdatalist = [userID, point, teamID];
+            // -------------------------------------------------------------------------------------------------------
+
+            var asoarray = [];
+            for(key in teampointlist){
+                asoarray.push({k:key, v:teampointlist[key]});
+            }
+            asoarray.sort(function(a, b){
+                if(a.v < b.v) return 1;
+                if(a.v > b.v) return -1;
+                return 0;
+            });
+            console.log(asoarray[0]["k"]);
+
+            for(i=0; i<asoarray.length; i++){
+                rown = "#row" + String(i);
+                $(rown).append($('<td>').text(String(i+1)));
+                $(rown).append($('<td>').text(asoarray[i]["k"]));
+                $(rown).append($('<td>').text(asoarray[i]["v"]));
+
+                var anslist = [];
+                for(k=0; k<answerloglist.length; k++){
+                    if(answerloglist[k].teamID == asoarray[i]["k"]){
+                        anslist.push(answerloglist[k].qID);
+                    }
+                }
+
+                for(j=0; j<questionscount; j++){
+                    var tempqid = "q"+String(j+1);
+                    if(anslist.indexOf(tempqid) == -1){
+                        $(rown).append("<td></td>");
+                    }
+                    else{
+                        $(rown).append("<td><span class=\"glyphicon glyphicon glyphicon-ok\"></span></td>");
+                    }
+                }
+            }
+        });
+
+    </script>
+</body>
+</html>

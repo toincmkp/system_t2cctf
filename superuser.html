@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <title>SuperUsersPage</title>
+    </head>
+
+    <body>
+        <script src="/js/jquery-1.11.2.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+
+        <audio id="sound-file" preload="auto">
+	        <source src="/wav/ataridayo.wav" type="audio/wav">
+        </audio>
+
+        <bottun id="url_appear">Send_URL!</bottun>
+        <ul></ul>
+
+        <script>
+            $(function(){
+                var socket = io.connect();
+
+                $('#url_appear').click(function() {
+                    socket.emit("url_threedboard", ["<a href=\"http://", "<a href=\"http://", "<a href=\"http://"]);
+                    alert("送信完了");
+                });
+
+                socket.on("ataridayo", function(data) {
+                    $('#sound-file').get(0).play();
+                    var objDate = new Date();
+                    var time = objDate.getTime();
+                    data += ", time : " + time;
+                    var li = $('<li>').text(data);
+                    $('ul').append(li);
+                });
+            });
+        </script>
+
+    </body>
+</html>
+

@@ -1,0 +1,1582 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <title>3D Packets and Score Visualizer and Challenges</title>
+        <link rel="stylesheet" href="css/threedboard.css">
+        <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+    </head>
+
+<body>
+    <script src="js/jquery-1.11.2.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/three.min.js"></script>
+    <script src="js/orbitControls.js"></script>
+    <script src="js/helvetiker_regular.typeface.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script id="vertexShader" type="x-shader/x-vertex">
+    uniform vec3 viewVector;
+    uniform float c;
+    uniform float p;
+    varying float intensity;
+    void main()
+    {
+        vec3 vNormal = normalize( normalMatrix * normal );
+        vec3 vNormel = normalize( normalMatrix * viewVector );
+        intensity = pow( c - dot(vNormal, vNormel), p );
+
+        gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+    }
+    </script>
+    <script id="fragmentShader" type="x-shader/x-vertex">
+    uniform vec3 glowColor;
+    varying float intensity;
+    void main()
+    {
+        vec3 glow = glowColor * intensity;
+        gl_FragColor = vec4( glow, 1.0 );
+    }
+    </script>
+
+    <nav class="navbar navbar-default">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="">T2C CTF</a>
+        </div>
+        <ul class="nav navbar-nav navbar-left">
+            <li class="active"><a id="nav_threedboard"></a></li>
+            <li><a id="nav_challenges" href="/challenges"></a></li>
+            <li><a id="nav_scoreboard" href="/scoreboard"></a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right" style="margin-right: 10px">
+            <li><a id="yourteam"></a></li>
+            <li><a id="yourteampoint"></a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </nav>
+
+    <div style="text-align: center; margin: 20px">
+        <img src="imgs/visualizer.png">
+    </div>
+
+    <div class="container" style="text-align: center" id="stage"></div>
+
+    <div style="text-align: center; margin-top: 5px;"><p id="first_camera" style="border:1px solid #ccc; display: inline-block; text-align: center; width: 150px;">1st-camera</p><p id="second_camera" style="border:1px solid #ccc; display: inline-block; text-align: center; width: 150px;">2nd-camera</p><p id="free_camera" style="border:1px solid #ccc; display: inline-block; text-align: center; width: 150px;">free-camera</p></div>
+
+    <div class="container" style="padding: 20px 0">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr><th>#</th><th><i class="glyphicon glyphicon-pencil"></i></th><th>Title</th><th>Category</th><th>Point</th></tr>
+            </thead>
+            <tbody>
+
+                <tr id="q1" class="modalclick"><td>1</td><td id="q1check"></td><td>練習問題</td><td id="q1genre">Miscellaneous</td><td id="q1point">10</td></tr>
+                <div class="modal fade" id="q1Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>練習問題</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>VDJDQ1RGe1czbGMwbTNfdDBfVDJDQ1RGIX0=</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q1resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q1input" class="enter">
+                                    <button type="submit" id="q1send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q2" class="modalclick"><td>2</td><td id="q2check"></td><td>Decode me (Lv.1)</td><td id="q2genre">Cryptography</td><td id="q2point">50</td></tr>
+                <div class="modal fade" id="q2Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>Decode me(Level.1)</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>**********</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q2resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q2input" class="enter">
+                                    <button type="submit" id="q2send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q3" class="modalclick"><td>3</td><td id="q3check"></td><td>Decode me (Lv.91)</td><td id="q3genre">Cryptography</td><td id="q3point">110</td></tr>
+                <div class="modal fade" id="q3Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>Decode me(Level.91)</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>**********</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q3resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q3input" class="enter">
+                                    <button type="submit" id="q3send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q4" class="modalclick"><td>4</td><td id="q4check"></td><td>The file cries wolf</td><td id="q4genre">Forensics</td><td id="q4point">50</td></tr>
+                <div class="modal fade" id="q4Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>The file cries wolf</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p><a href="/qfiles/flag.doc">flag.doc</a></p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q4resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q4input" class="enter">
+                                    <button type="submit" id="q4send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q5" class="modalclick"><td>5</td><td id="q5check"></td><td>ROT-13</td><td id="q5genre">Cryptography</td><td id="q5point">50</td></tr>
+                <div class="modal fade" id="q5Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>ROT-13</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>**********</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q5resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q5input" class="enter">
+                                    <button type="submit" id="q5send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q6" class="modalclick"><td>6</td><td id="q6check"></td><td>ご注文は◯◯◯ですか？</td><td id="q6genre">Web</td><td id="q6point">120</td></tr>
+                <div class="modal fade" id="q6Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>ご注文は◯◯◯ですか？</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>**********</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q6resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q6input" class="enter">
+                                    <button type="submit" id="q6send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q7" class="modalclick"><td>7</td><td id="q7check"></td><td>WWW-Authenticate</td><td id="q7genre">Web</td><td id="q7point">110</td></tr>
+                <div class="modal fade" id="q7Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>WWW-Authenticate</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>**********</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q7resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q7input" class="enter">
+                                    <button type="submit" id="q7send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q8" class="modalclick"><td>8</td><td id="q8check"></td><td>今持ってる？</td><td id="q8genre">Web</td><td id="q8point">150</td></tr>
+                <div class="modal fade" id="q8Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>今持ってる？</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>**********</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q8resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q8input" class="enter">
+                                    <button type="submit" id="q8send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q9" class="modalclick"><td>9</td><td id="q9check"></td><td>Text-based protocol</td><td id="q9genre">Network</td><td id="q9point">150</td></tr>
+                <div class="modal fade" id="q9Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>Text-based protocol</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>**********</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q9resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q9input" class="enter">
+                                    <button type="submit" id="q9send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q10" class="modalclick"><td>10</td><td id="q10check"></td><td>らくだ本と言えば…</td><td id="q10genre">Miscellaneous</td><td id="q10point">120</td></tr>
+                <div class="modal fade" id="q10Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>らくだ本と言えば…</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>**********</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q10resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q10input" class="enter">
+                                    <button type="submit" id="q10send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q11" class="modalclick"><td>11</td><td id="q11check"></td><td>x86読んでみよう</td><td id="q11genre">Binary</td><td id="q11point">150</td></tr>
+                <div class="modal fade" id="q11Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>x86読んでみよう</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>以下のアセンブリ言語から printf で表示される数を答えてください</p>
+                                    <div style="text-align: center;">
+                                        <img src="qfiles/x86.png">
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q11resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q11input" class="enter">
+                                    <button type="submit" id="q11send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q12" class="modalclick"><td>12</td><td id="q12check"></td><td>パスワードは何？</td><td id="q12genre">Binary</td><td id="q12point">250</td></tr>
+                <div class="modal fade" id="q12Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>パスワードは何？</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>**********</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q12resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q12input" class="enter">
+                                    <button type="submit" id="q12send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q13" class="modalclick"><td>13</td><td id="q13check"></td><td>ここはどこ？</td><td id="q13genre">Forensics</td><td id="q13point">60</td></tr>
+                <div class="modal fade" id="q13Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>ここはどこ？</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>**********</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q13resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q13input" class="enter">
+                                    <button type="submit" id="q13send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q14" class="modalclick"><td>14</td><td id="q14check"></td><td>削除されたフォルダ名は何？</td><td id="q14genre">Forensics</td><td id="q14point">300</td></tr>
+                <div class="modal fade" id="q14Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>削除されたフォルダ名は何？</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>**********</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q14resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q14input" class="enter">
+                                    <button type="submit" id="q14send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q15" class="modalclick"><td>15</td><td id="q15check"></td><td>Tell me the CVE-number</td><td id="q15genre">Miscellaneous</td><td id="q15point">150</td></tr>
+                <div class="modal fade" id="q15Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>Tell me the CVE-number</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>**********</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q15resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q15input" class="enter">
+                                    <button type="submit" id="q15send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q16" class="modalclick"><td>16</td><td id="q16check"></td><td>QR猫ード</td><td id="q16genre">Forensics</td><td id="q16point">200</td></tr>
+                <div class="modal fade" id="q16Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>QR猫ード</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>**********</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q16resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q16input" class="enter">
+                                    <button type="submit" id="q16send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q17" class="modalclick"><td>17</td><td id="q17check"></td><td>Programming and morus</td><td id="q17genre">Programming</td><td id="q17point">220</td></tr>
+                <div class="modal fade" id="q17Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>Programming and morus</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>**********</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q17resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q17input" class="enter">
+                                    <button type="submit" id="q17send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q18" class="modalclick"><td>18</td><td id="q18check"></td><td>Merry -sX'mas!</td><td id="q18genre">Network</td><td id="q18point">200</td></tr>
+                <div class="modal fade" id="q18Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>Merry -sX'mas!</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>**********</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q18resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q18input" class="enter">
+                                    <button type="submit" id="q18send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q19" class="modalclick"><td>19</td><td id="q19check"></td><td>美しき策謀</td><td id="q19genre">Binary</td><td id="q19point">300</td></tr>
+                <div class="modal fade" id="q19Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>美しき策謀</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>**********</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q19resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q19input" class="enter">
+                                    <button type="submit" id="q19send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q20" class="modalclick"><td>20</td><td id="q20check"></td><td>Net stalker</td><td id="q20genre">Reconnaissance</td><td id="q20point">100</td></tr>
+                <div class="modal fade" id="q20Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>Net stalker</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>**********</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q20resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q20input" class="enter">
+                                    <button type="submit" id="q20send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q21" class="modalclick"><td>21</td><td id="q21check"></td><td>Offensive Security</td><td id="q21genre">Trivia</td><td id="q21point">50</td></tr>
+                <div class="modal fade" id="q21Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>Offensive Security</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>**********</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q21resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q21input" class="enter">
+                                    <button type="submit" id="q21send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q22" class="modalclick"><td>22</td><td id="q22check"></td><td>Intelligence Gathering</td><td id="q22genre">Trivia</td><td id="q22point">50</td></tr>
+                <div class="modal fade" id="q22Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>Intelligence Gathering</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>**********</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q22resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q22input" class="enter">
+                                    <button type="submit" id="q22send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <tr id="q23" class="modalclick"><td>23</td><td id="q23check"></td><td>Stack-Smashing Protection</td><td id="q23genre">Trivia</td><td id="q23point">50</td></tr>
+                <div class="modal fade" id="q23Modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title"><strong>Stack-Smashing Protection</strong></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Visual C++のコンパイラでは, BOF（バッファ・オーバーフロー）対策としてBOFを検知するための値を用いるが, この値はなんと呼ばれている？</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="q23resulttext"></span>
+                                    <input type="text" placeholder="Flag" id="q23input" class="enter">
+                                    <button type="submit" id="q23send" class="btn btn-primary flagSend">Submit!</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+            </tbody>
+        </table>
+
+        <p><span class="glyphicon glyphicon-flag"></span>　 あなたが一番最初に問題を解きました！</p>
+        <p><span class="glyphicon glyphicon-thumbs-up"></span>　 あなたが問題を解きました！</p>
+        <p><span class="glyphicon glyphicon glyphicon-ok"></span> 　チームメイトが問題を解きました！</p>
+        <p><span class="glyphicon glyphicon-exclamation-sign"></span> 　他チームが問題を解きました！</p>
+
+    </div>
+
+    <script>
+        $(function() {
+
+            var socket = io.connect();
+            var questionscount = 23;
+            var animationList = [];
+
+            // ---------------------------------------------------------------------
+            // Teams & Personal Initiation
+            // ---------------------------------------------------------------------
+            var teamlist = <%- JSON.stringify(ejsteamlist) %>;
+            var usersdatalist = <%- JSON.stringify(ejsusersdata) %>;
+            var answerloglist = <%- JSON.stringify(ejsanslog) %>;
+            var yourdatalist = <%- JSON.stringify(ejsyourdata) %>;
+
+            // ----------------------------------------
+            // Teams & Personal Initiation
+            // ---------------------------------------------------------------------
+            // Setting Users By Teams
+            // ---------------------------------------------------------------------
+            var teamuserlist = [];
+            var temp = [];
+            for (i=0; i<teamlist.length; i++) {
+                for (j=0; j<usersdatalist.length; j++) {
+                    if (teamlist[i] == usersdatalist[j].teamID) {
+                        temp.push(usersdatalist[j]);
+                    }
+                }
+                teamuserlist.push(temp);
+                temp = [];
+            }
+
+            // ----------------------------------------
+            // Teams & Personal Initiation
+            // ---------------------------------------------------------------------
+            // Setting Each Team Point
+            // ---------------------------------------------------------------------
+            var teampointlist = [];
+            for (i=0; i < teamlist.length; i++) {
+                teampointlist[teamlist[i]] = 0;
+
+                for (j=0; j < teamuserlist[i].length; j++) {
+                    teampointlist[teamlist[i]] += teamuserlist[i][j].point;
+                }
+            }
+
+            // ----------------------------------------
+            // Teams & Personal Initiation
+            // ---------------------------------------------------------------------
+            // Rendering Personal Inoformation
+            // ---------------------------------------------------------------------
+            var tempyourteam = "teamID : " + yourdatalist[2];
+            $('#yourteam').text(tempyourteam);
+            $('#yourteampoint').text(String(teampointlist[yourdatalist[2]]) + "pt");
+
+            $('#nav_threedboard').text("threedboard");
+            $('#nav_challenges').text("challenges");
+            $('#nav_scoreboard').text("scoreboard");
+
+            // -------------------------------------------------------------------------------------------------------
+            // These are important things
+            // -------------------------------------------------------------------------------------------------------
+            // teamlist = ["team1", "team2", "team3", ...];
+            // teamuserlist = [[user1_object, user2_object, ...], [user1_object, ...], [...], ...];
+            // teampointlist = [team1: point, team2: point, ...];
+            // yourdatalist = [userID, point, teamID];
+            // -------------------------------------------------------------------------------------------------------
+
+            // ---------------------------------------------------------------------
+            // Gliphicon Rendering
+            // ---------------------------------------------------------------------
+            for (i=1; i < questionscount + 1; i++) {
+                var tempcheckqid = "#q" + i + "check";
+                var tempchecknum = "q" + i;
+
+                var tempcheckqidlist = [];
+                for (j=0; j < answerloglist.length; j++) {
+                    if (tempchecknum == answerloglist[j].qID) {
+                        tempcheckqidlist.push(answerloglist[j]);
+                    }
+                }
+
+                for (j=0; j < tempcheckqidlist.length; j++) {
+                    if (j == 0) {
+                        if (tempcheckqidlist[0].userID == yourdatalist[0]) {
+                            $(tempcheckqid).html('<i class="glyphicon glyphicon-flag"></i>');
+                            $(tempcheckqid).hide();
+                            $(tempcheckqid).fadeIn();
+                            break;
+                        }
+                        else if (tempcheckqidlist[j].userID != yourdatalist[0] && tempcheckqidlist[j].teamID == yourdatalist[2]) {
+                            $(tempcheckqid).html('<i class="glyphicon glyphicon-ok"></i>');
+                            $(tempcheckqid).hide();
+                            $(tempcheckqid).fadeIn();
+                            break;
+                        }
+                        else {
+                            $(tempcheckqid).html('<i class="glyphicon glyphicon-exclamation-sign"></i>');
+                            $(tempcheckqid).hide();
+                            $(tempcheckqid).fadeIn();
+                        }
+
+                    }
+                    else {
+                        if (tempcheckqidlist[j].userID == yourdatalist[0]) {
+                            $(tempcheckqid).html('<i class="glyphicon glyphicon-thumbs-up"></i>');
+                            $(tempcheckqid).hide();
+                            $(tempcheckqid).fadeIn();
+                            break;
+                        }
+                        else if (tempcheckqidlist[j].userID != yourdatalist[0] && tempcheckqidlist[j].teamID == yourdatalist[2]) {
+                            $(tempcheckqid).html('<i class="glyphicon glyphicon-ok"></i>');
+                            $(tempcheckqid).hide();
+                            $(tempcheckqid).fadeIn();
+                            break;
+                        }
+                        else {
+                            $(tempcheckqid).html('<i class="glyphicon glyphicon-exclamation-sign"></i>');
+                            $(tempcheckqid).hide();
+                            $(tempcheckqid).fadeIn();
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // ---------------------------------------------------------------------
+            // EachObjectPositionsInitiation
+            // ---------------------------------------------------------------------
+            var eachobjectPositionsList = [];
+
+            // ----------------------------------------
+            // 3D Objects by Three.js
+            // ---------------------------------------------------------------------
+            // Configuration & Intiation & Coloring
+            // ---------------------------------------------------------------------
+            var width = 960;
+            var height = 540;
+
+            var teamcount = teamlist.length;
+            var teamboardradius = 2000;
+
+            var orbit_firstcount = 30;
+            var orbit_firstradius = 450;
+
+            var each_obj_color = [0x006f9d, 0x006f9d, 0x006f9d, 0x0077ff, 0xff77ff, 0xff4242, 0x2d9b6d, 0x00b187, 0xcff5a0, 0xe1efff];
+            var orbit_color = [0x00b187, 0xfe7000];
+            var userpanel_color = [0xaaff00, 0xffff00, 0xffaa00, 0xff5500, 0xff0000];
+
+            // ----------------------------------------
+            // 3D Objects by Three.js
+            // ----------------------------------------------------------------------
+            // Setting Genrelist By QuesitonID & Replacing words
+            // ----------------------------------------------------------------------
+            var genrelist = [-1];
+            var str = "";
+            for (i=1; i<questionscount+1; i++) {
+                str = "#q" + i + "genre";
+                str = $(str).text();
+
+                if (str == "Cryptography") {
+                    str = "Crypto";
+                }
+                else if (str == "Steganography") {
+                    str = "Stego";
+                }
+                else if (str == "Binary") {
+                    str = "Bin";
+                }
+                else if (str == "Programming") {
+                    str = "Prog";
+                }
+                else if (str == "Miscellaneous") {
+                    str = "Misc";
+                }
+                else if (str == "Network") {
+                    str = "Net";
+                }
+                else if (str == "Reconnaissance") {
+                    str = "Recon";
+                }
+                else if (str == "Forensics") {
+                    str = "For"
+                }
+                else if (str == "Trivia") {
+                    str = "Trivia"
+                }
+
+                genrelist.push(str);
+            }
+
+            // ----------------------------------------
+            // 3D Objects by Three.js
+            // ------------------------------------------
+            // Setting Pointlist By QuesitonID
+            // ------------------------------------------
+            var pointlist = [-1];
+            var str = "";
+            for (i=1; i<questionscount+1; i++) {
+                str = "#q" + i + "point";
+                str = $(str).text();
+                pointlist.push(str);
+            }
+
+            // ----------------------------------------
+            // 3D Objects by Three.js
+            // -------------------------------------------------------------------------
+            // Setting Genrelist & QuestionID By Each QuestionBoard
+            // -------------------------------------------------------------------------
+            var genrelist_first = [];
+            var genrelist_second = [];
+            var genrelist_third = [];
+
+            var under100idlist = [];
+            var under200idlist = [];
+            var under300idlist = [];
+
+            for (i=1; i<questionscount+1; i++) {
+                if (Number(pointlist[i]) < 100) {
+                    genrelist_first.push(genrelist[i]);
+                    under100idlist.push(i);
+                }
+                else if (100 <= Number(pointlist[i]) && Number(pointlist[i]) < 200) {
+                    genrelist_second.push(genrelist[i]);
+                    under200idlist.push(i);
+                }
+                else {
+                    genrelist_third.push(genrelist[i]);
+                    under300idlist.push(i);
+                }
+            }
+
+
+            // ----------------------------------------
+            // 3D Objects by Three.js
+            // ----------------------------------------
+            // Each Question Count
+            // ----------------------------------------
+            var questionpanel_firstcount = genrelist_first.length;
+            var questionpanel_secondcount = genrelist_second.length;
+            var questionpanel_thirdcount = genrelist_third.length;
+            var questionpanel_radius = 700;
+
+
+            // ----------------------------------------
+            // 3D Objects by Three.js
+            // ----------------------------------------
+            // Scene
+            // ----------------------------------------
+            var scene = new THREE.Scene();
+
+            // ----------------------------------------
+            // 3D Objects by Three.js
+            // ----------------------------------------
+            // Camera
+            // ----------------------------------------
+            var camera = new THREE.PerspectiveCamera(45, width / height, 1, 20000);
+            var camera_click_positions = 0;
+            camera.position.set(3000, 2000, 3400);
+            cameraRadian = 0;
+
+            // ----------------------------------------
+            // 3D Objects by Three.js
+            // ----------------------------------------
+            // Shader Glow Initiation
+            // ----------------------------------------
+            var TeamBoradMaterial = new THREE.ShaderMaterial(
+            {
+                uniforms:
+                {
+                    "c":   { type: "f", value: 1.0 },
+                    "p":   { type: "f", value: 0.7 },
+                    glowColor: { type: "c", value: new THREE.Color(0x2d9b6d) },
+                    viewVector: { type: "v3", value: camera.position }
+                },
+                vertexShader:   document.getElementById('vertexShader').textContent,
+                fragmentShader: document.getElementById('fragmentShader').textContent,
+                side: THREE.FrontSide,
+                blending: THREE.AdditiveBlending,
+                transparent: true
+            });
+
+            var T2CSphereMaterial = new THREE.ShaderMaterial(
+            {
+                uniforms:
+                {
+                    "c":   { type: "f", value: 1.0 },
+                    "p":   { type: "f", value: 1.5 },
+                    glowColor: { type: "c", value: new THREE.Color(0xe1efff) },
+                    viewVector: { type: "v3", value: camera.position }
+                },
+                vertexShader:   document.getElementById('vertexShader').textContent,
+                fragmentShader: document.getElementById('fragmentShader').textContent,
+                side: THREE.FrontSide,
+                blending: THREE.AdditiveBlending,
+                transparent: true
+            });
+
+            var questionpanelMaterial = new THREE.ShaderMaterial(
+            {
+                uniforms:
+                {
+                    "c":   { type: "f", value: 1.0 },
+                    "p":   { type: "f", value: 0.35 },
+                    glowColor: { type: "c", value: new THREE.Color(0x0077ff) },
+                    viewVector: { type: "v3", value: camera.position }
+                },
+                vertexShader:   document.getElementById('vertexShader').textContent,
+                fragmentShader: document.getElementById('fragmentShader').textContent,
+                side: THREE.FrontSide,
+                blending: THREE.AdditiveBlending,
+                transparent: true
+            });
+
+
+            // ----------------------------------------
+            // 3D Objects by Three.js
+            // ----------------------------------------
+            // Mesh Questionboard
+            // ----------------------------------------
+            var questionboardGeo = new THREE.CylinderGeometry( 1200, 1200, 20, 6, 0 );
+            var questionboardMat = new THREE.MeshLambertMaterial( {color: each_obj_color[0]} );
+            questionboardMat.transparent = true;
+            questionboardMat.opacity = 0.1;
+
+            var questionboardGeo_w = new THREE.CylinderGeometry( 1200, 1200, 20, 6, 0, 0 );
+            var questionboardMat_w = new THREE.MeshLambertMaterial( {color: each_obj_color[0]} );
+            questionboardMat_w.wireframe = true;
+
+            var questionboard_first = new THREE.Mesh(questionboardGeo, questionboardMat.clone());
+            questionboard_first.position.set(0, 110, 0);
+            questionboard_first.renderOrder = 1;
+            scene.add( questionboard_first );
+
+            var questionboard_first_w = new THREE.Mesh(questionboardGeo_w, questionboardMat_w.clone());
+            questionboard_first_w.position.set(0, 110, 0);
+            questionboard_first_w.renderOrder = 1;
+            scene.add( questionboard_first_w );
+
+            var questionboard_second = new THREE.Mesh(questionboardGeo, questionboardMat.clone());
+            questionboard_second.material.color = new THREE.Color( each_obj_color[1] );
+            questionboard_second.position.set(0, 510, 0);
+            questionboard_second.renderOrder = 1;
+            scene.add( questionboard_second );
+
+            var questionboard_second_w = new THREE.Mesh(questionboardGeo_w, questionboardMat_w.clone());
+            questionboard_second_w.material.color = new THREE.Color( each_obj_color[1] );
+            questionboard_second_w.position.set(0, 510, 0);
+            questionboard_second_w.renderOrder = 1;
+            scene.add( questionboard_second_w );
+
+            var questionboard_third = new THREE.Mesh(questionboardGeo, questionboardMat.clone());
+            questionboard_second.material.color = new THREE.Color( each_obj_color[2] );
+            questionboard_third.position.set(0, 910, 0);
+            questionboard_third.renderOrder = 1;
+            scene.add( questionboard_third );
+
+            var questionboard_third_w = new THREE.Mesh(questionboardGeo_w, questionboardMat_w.clone());
+            questionboard_second_w.material.color = new THREE.Color( each_obj_color[2] );
+            questionboard_third_w.position.set(0, 910, 0);
+            questionboard_third_w.renderOrder = 1;
+            scene.add( questionboard_third_w );
+
+            // ----------------------------------------
+            // 3D Objects by Three.js
+            // ----------------------------------------
+            // Mesh Questionpanel
+            // ----------------------------------------
+            var questionpanellist_first = [];
+            var questionpanelGeo = new THREE.SphereGeometry(100, 6, 50);
+            for (i=0; i < questionpanel_firstcount; i++) {
+                questionpanellist_first[i] = new THREE.Mesh(questionpanelGeo.clone(), questionpanelMaterial.clone());
+                questionpanellist_first[i].material.uniforms.glowColor.value = new THREE.Color( each_obj_color[3] );
+                questionpanellist_first[i].position.set(questionpanel_radius * Math.cos((2*Math.PI ) * (i/questionpanel_firstcount)), 150, questionpanel_radius * Math.sin((2*Math.PI ) * (i/questionpanel_firstcount)));
+                eachobjectPositionsList["q" + String(under100idlist[i])] = {x: questionpanellist_first[i].position.x, y: questionpanellist_first[i].position.y, z: questionpanellist_first[i].position.z};
+                questionpanellist_first[i].scale.set(2, 0.2, 2);
+                questionpanellist_first[i].rotation.y = (-2 * Math.PI) * (i/questionpanel_firstcount);
+                scene.add( questionpanellist_first[i] );
+            }
+            var questionpanellist_second = [];
+            for (i=0; i < questionpanel_secondcount; i++) {
+                questionpanellist_second[i] = new THREE.Mesh(questionpanelGeo.clone(), questionpanelMaterial.clone());
+                questionpanellist_second[i].material.uniforms.glowColor.value = new THREE.Color( each_obj_color[4] );
+                questionpanellist_second[i].position.set(questionpanel_radius * Math.cos((2*Math.PI ) * (i/questionpanel_secondcount)), 550, questionpanel_radius * Math.sin((2*Math.PI ) * (i/questionpanel_secondcount)));
+                eachobjectPositionsList["q" + String(under200idlist[i])] = {x: questionpanellist_second[i].position.x, y: questionpanellist_second[i].position.y, z: questionpanellist_second[i].position.z};
+                questionpanellist_second[i].rotation.y = Math.PI /2;
+                questionpanellist_second[i].scale.set(2, 0.2, 2);
+                scene.add( questionpanellist_second[i] );
+            }
+            var questionpanellist_third = [];
+            for (i=0; i < questionpanel_thirdcount; i++) {
+                questionpanellist_third[i] = new THREE.Mesh(questionpanelGeo.clone(), questionpanelMaterial.clone());
+                questionpanellist_third[i].material.uniforms.glowColor.value = new THREE.Color( each_obj_color[5] );
+                questionpanellist_third[i].position.set(questionpanel_radius * Math.cos((2*Math.PI ) * (i/questionpanel_thirdcount)), 950, questionpanel_radius * Math.sin((2*Math.PI ) * (i/questionpanel_thirdcount)));
+                eachobjectPositionsList["q" + String(under300idlist[i])] = {x: questionpanellist_third[i].position.x, y: questionpanellist_third[i].position.y, z: questionpanellist_third[i].position.z};
+                questionpanellist_third[i].rotation.y = Math.PI /2;
+                questionpanellist_third[i].scale.set(2, 0.2, 2);
+                scene.add( questionpanellist_third[i] );
+            }
+
+            // ----------------------------------------
+            // 3D Objects by Three.js
+            // ----------------------------------------
+            // Mesh TeamBoard
+            // ----------------------------------------
+            var teamboardlist = [];
+            var teamboardGeo = new THREE.SphereGeometry(100, 50, 50);
+            for (i=0; i < teamcount; i++) {
+                teamboardlist[i] = new THREE.Mesh(teamboardGeo, TeamBoradMaterial.clone());
+                teamboardlist[i].position.set(teamboardradius * Math.cos((2*Math.PI ) * (i/teamcount)), 100, teamboardradius * Math.sin((2*Math.PI ) * (i/teamcount)));
+                teamboardlist[i].scale.set(4, 0.5, 4);
+                scene.add( teamboardlist[i] );
+            }
+
+            // ----------------------------------------
+            // 3D Objects by Three.js
+            // ----------------------------------------
+            // Mesh TeamBoard Orbits
+            // ----------------------------------------
+            var orbit_firstGeo = new THREE.BoxGeometry(40, 10, 20);
+            var orbit_firstMat = new THREE.MeshLambertMaterial( {color: orbit_color[0]} );
+            orbit_firstMat.transparent = true;
+            orbit_firstMat.opacity = 0.3;
+
+            var orbit_firstlist = [];
+            for (i=0; i < teamcount; i++) {
+                orbit_firstlist[teamlist[i]] = [];
+                orbit_firstlist[teamlist[i]].push([]);
+            }
+
+            var orbit_tempRadius = Math.PI;
+            for (j=0; j < teamcount; j++) {
+                for (i=0; i < orbit_firstcount; i++) {
+                    orbit_firstlist[teamlist[j]][i] = new THREE.Mesh( orbit_firstGeo, orbit_firstMat.clone() );
+                    orbit_firstlist[teamlist[j]][i].position.set( ( orbit_firstradius * Math.cos((2*Math.PI ) * (i/orbit_firstcount) + orbit_tempRadius) ) +  (teamboardradius * Math.cos((2*Math.PI ) * (j/teamcount))), 100, (orbit_firstradius * Math.sin((2*Math.PI ) * (i/orbit_firstcount) + orbit_tempRadius)) + (teamboardradius * Math.sin((2*Math.PI ) * (j/teamcount))));
+                    orbit_firstlist[teamlist[j]][i].rotation.y = (-2 * Math.PI ) * (i/orbit_firstcount) - orbit_tempRadius;
+                    scene.add( orbit_firstlist[teamlist[j]][i] );
+                }
+                orbit_tempRadius += (2 * Math.PI) / teamcount;
+            }
+
+            // ----------------------------------------
+            // 3D Objects by Three.js
+            // ----------------------------------------
+            // Mesh UserPanels
+            // ----------------------------------------
+            var userpanel_radius = 200;
+
+            var userpanelGeo = new THREE.CylinderGeometry( 120, 120, 10, 6, 0 );
+            var userpanelMat = new THREE.MeshLambertMaterial( {color: userpanel_color[0]} );
+            userpanelMat.transparent = true;
+            userpanelMat.opacity = 0.1;
+
+            var userpanelGeo_w = new THREE.CylinderGeometry( 120, 120, 10, 6, 0, 0 );
+            var userpanelMat_w = new THREE.MeshLambertMaterial( {color: userpanel_color[0]} );
+            userpanelMat_w.wireframe = true;
+
+            var userpanelList = [];
+            for (i=0; i < teamcount; i++) {
+                userpanelList[teamlist[i]] = [];
+                userpanelList[teamlist[i]].push([]);
+
+                for (j=0; j < teamuserlist[i].length; j++) {
+                    userpanelList[teamlist[i]][j] = new THREE.Mesh(userpanelGeo.clone(), userpanelMat.clone());
+                    userpanelList[teamlist[i]][j].name = teamuserlist[i][j].userID;
+                    userpanelList[teamlist[i]][j].position.set( ( userpanel_radius * Math.cos((2*Math.PI ) * (j/teamuserlist[i].length)) ) +  (teamboardradius * Math.cos((2*Math.PI ) * (i/teamcount))), 170, (userpanel_radius * Math.sin((2*Math.PI ) * (j/teamuserlist[i].length))) + (teamboardradius * Math.sin((2*Math.PI ) * (i/teamcount))));
+                    eachobjectPositionsList[teamuserlist[i][j].userID] = {x: userpanelList[teamlist[i]][j].position.x, y: userpanelList[teamlist[i]][j].position.y, z: userpanelList[teamlist[i]][j].position.z};
+                    userpanelList[teamlist[i]][j].renderOrder = 1;
+
+                    if (300 <= teamuserlist[i][j].point && teamuserlist[i][j].point < 600) {
+                        userpanelList[teamlist[i]][j].material.color = new THREE.Color( userpanel_color[1] );
+                    }
+                    if (600 <= teamuserlist[i][j].point && teamuserlist[i][j].point < 900) {
+                        userpanelList[teamlist[i]][j].material.color = new THREE.Color( userpanel_color[2] );
+                    }
+                    if (900 <= teamuserlist[i][j].point && teamuserlist[i][j].point < 1200) {
+                        userpanelList[teamlist[i]][j].material.color = new THREE.Color( userpanel_color[3] );
+                    }
+                    else if (1200 <= teamuserlist[i][j].point) {
+                        userpanelList[teamlist[i]][j].material.color = new THREE.Color( userpanel_color[4] );
+                    }
+
+                    scene.add(userpanelList[teamlist[i]][j]);
+                }
+            }
+
+            var userpanelList_w = [];
+            for (i=0; i < teamcount; i++) {
+                userpanelList_w[teamlist[i]] = [];
+                userpanelList_w[teamlist[i]].push([]);
+
+                for (j=0; j < teamuserlist[i].length; j++) {
+                    userpanelList_w[teamlist[i]][j] = new THREE.Mesh(userpanelGeo_w.clone(), userpanelMat_w.clone());
+                    userpanelList_w[teamlist[i]][j].name = teamuserlist[i][j].userID;
+                    userpanelList_w[teamlist[i]][j].position.set( ( userpanel_radius * Math.cos((2*Math.PI ) * (j/teamuserlist[i].length)) ) +  (teamboardradius * Math.cos((2*Math.PI ) * (i/teamcount))), 170, (userpanel_radius * Math.sin((2*Math.PI ) * (j/teamuserlist[i].length))) + (teamboardradius * Math.sin((2*Math.PI ) * (i/teamcount))));
+                    userpanelList_w[teamlist[i]][j].renderOrder = 1;
+
+                    if (300 <= teamuserlist[i][j].point && teamuserlist[i][j].point < 600) {
+                        userpanelList_w[teamlist[i]][j].material.color = new THREE.Color( userpanel_color[1] );
+                    }
+                    if (600 <= teamuserlist[i][j].point && teamuserlist[i][j].point < 900) {
+                        userpanelList_w[teamlist[i]][j].material.color = new THREE.Color( userpanel_color[2] );
+                    }
+                    if (900 <= teamuserlist[i][j].point && teamuserlist[i][j].point < 1200) {
+                        userpanelList_w[teamlist[i]][j].material.color = new THREE.Color( userpanel_color[3] );
+                    }
+                    else if (1200 <= teamuserlist[i][j].point) {
+                        userpanelList_w[teamlist[i]][j].material.color = new THREE.Color( userpanel_color[4] );
+                    }
+
+                    scene.add(userpanelList_w[teamlist[i]][j]);
+                }
+            }
+
+
+            // ----------------------------------------
+            // 3D Objects by Three.js
+            // ----------------------------------------
+            // Mesh T2C sphere
+            // ----------------------------------------
+            var t2csphereGeo = new THREE.SphereGeometry(100, 50, 50);
+            var t2csphere = new THREE.Mesh( t2csphereGeo, T2CSphereMaterial.clone() );
+            t2csphere.position.set(0, 1300, 0);
+            t2csphere.scale.set(2, 2, 2);
+            scene.add( t2csphere );
+
+            var t2csphereGeo = new THREE.SphereGeometry(100, 50, 50);
+            var t2csphereorbit = new THREE.Mesh( t2csphereGeo, T2CSphereMaterial.clone() );
+            t2csphereorbit.position.set(0, 1300, 0);
+            t2csphereorbit.scale.set(4, 0.2, 4);
+            t2csphereorbit.renderOrder = 1;
+            scene.add( t2csphereorbit );
+
+
+            // ----------------------------------------
+            // 3D Objects by Three.js
+            // ----------------------------------------
+            // Mesh Text QuestionTexts
+            // ----------------------------------------
+            var questextid100Geo = [];
+            var questextid100Mat = [];
+            var questextid100 = [];
+            for (i=0; i<under100idlist.length; i++) {
+                questextid100Geo[i] = new THREE.TextGeometry( under100idlist[i]+" : "+genrelist_first[i], {
+                    size: 50,
+                    curveSegments: 20,
+                    height: 1,
+                    bevelEnabled: false
+                });
+                questextid100Mat[i] = new THREE.MeshLambertMaterial();
+                questextid100[i] = new THREE.Mesh( questextid100Geo[i], questextid100Mat[i] );
+
+                questextid100[i].position.set((questionpanel_radius - 150) * Math.cos((2*Math.PI ) * (i/under100idlist.length)), 150, (questionpanel_radius - 150) * Math.sin((2*Math.PI ) * (i/under100idlist.length)));
+                questextid100[i].rotation.x = -Math.PI / 2;
+                questextid100[i].rotation.z = -2 * Math.PI * ( i / under100idlist.length);
+                scene.add( questextid100[i] );
+            }
+            var questextid200Geo = [];
+            var questextid200Mat = [];
+            var questextid200 = [];
+            for (i=0; i<under200idlist.length; i++) {
+                questextid200Geo[i] = new THREE.TextGeometry( under200idlist[i]+" : "+genrelist_second[i], {
+                    size: 50,
+                    curveSegments: 20,
+                    height: 1,
+                    bevelEnabled: false
+                });
+                questextid200Mat[i] = new THREE.MeshLambertMaterial();
+                questextid200[i] = new THREE.Mesh( questextid200Geo[i], questextid200Mat[i] );
+
+                questextid200[i].position.set((questionpanel_radius - 150) * Math.cos((2*Math.PI ) * (i/under200idlist.length)), 550, (questionpanel_radius - 150) * Math.sin((2*Math.PI ) * (i/under200idlist.length)));
+                questextid200[i].rotation.x = -Math.PI / 2;
+                questextid200[i].rotation.z = -2 * Math.PI * ( i / under200idlist.length);
+                scene.add( questextid200[i] );
+            }
+            var questextid300Geo = [];
+            var questextid300Mat = [];
+            var questextid300 = [];
+            for (i=0; i<under300idlist.length; i++) {
+                questextid300Geo[i] = new THREE.TextGeometry( under300idlist[i]+" : "+genrelist_third[i], {
+                    size: 50,
+                    curveSegments: 20,
+                    height: 1,
+                    bevelEnabled: false
+                });
+                questextid300Mat[i] = new THREE.MeshLambertMaterial();
+                questextid300[i] = new THREE.Mesh( questextid300Geo[i], questextid300Mat[i] );
+
+                questextid300[i].position.set((questionpanel_radius - 150) * Math.cos((2*Math.PI ) * (i/under300idlist.length)), 950, (questionpanel_radius - 150) * Math.sin((2*Math.PI ) * (i/under300idlist.length)));
+                questextid300[i].rotation.x = -Math.PI / 2;
+                questextid300[i].rotation.z = -2 * Math.PI * ( i / under300idlist.length);
+                scene.add( questextid300[i] );
+            }
+
+
+            // ----------------------------------------
+            // 3D Objects by Three.js
+            // ----------------------------------------
+            // Mesh Text TeamNames
+            // ----------------------------------------
+            var textGeo = [];
+            var textMat = [];
+            var teamnametext = [];
+            for (i=0; i < teamlist.length; i++) {
+                textGeo[i] = new THREE.TextGeometry( teamlist[i], {
+                    size: 100,
+                    curveSegments: 20,
+                    height: 1,
+                    bevelEnabled: false
+                });
+                textMat[i] = new THREE.MeshLambertMaterial();
+                teamnametext[i] = new THREE.Mesh( textGeo[i], textMat[i] );
+
+                teamnametext[i].position.set((teamboardradius+700) * Math.cos((2*Math.PI ) * (i/teamlist.length)), 50, (teamboardradius+700) * Math.sin((2*Math.PI ) * (i/teamlist.length)));
+                teamnametext[i].rotation.x = -Math.PI / 2;
+                teamnametext[i].rotation.z = -2 * Math.PI * (i/teamlist.length) + (Math.PI / 2);
+                scene.add( teamnametext[i] );
+            }
+
+            // ----------------------------------------
+            // 3D Objects by Three.js
+            // ----------------------------------------
+            // Mesh Text UserIDtexts
+            // ----------------------------------------
+            var useridtextGeo = [];
+            var useridtextMat = [];
+            var useridtextMesh = [];
+            for (i=0; i < teamlist.length; i++) {
+                for (j=0; j < teamuserlist[i].length; j++) {
+                    useridtextGeo[teamuserlist[i][j].userID] = new THREE.TextGeometry( teamuserlist[i][j].userID, {
+                        size: 40,
+                        curveSegments: 20,
+                        height: 1,
+                        bevelEnabled: false
+                    });
+
+                    useridtextMat[teamuserlist[i][j].userID] = new THREE.MeshLambertMaterial();
+                    useridtextMesh[teamuserlist[i][j].userID] = new THREE.Mesh( useridtextGeo[teamuserlist[i][j].userID], useridtextMat[teamuserlist[i][j].userID] );
+                    useridtextMesh[teamuserlist[i][j].userID].position.set( ( userpanel_radius * Math.cos((2*Math.PI ) * (j/teamuserlist[i].length)) ) +  (teamboardradius * Math.cos((2*Math.PI ) * (i/teamcount))), 170, (userpanel_radius * Math.sin((2*Math.PI ) * (j/teamuserlist[i].length))) + (teamboardradius * Math.sin((2*Math.PI ) * (i/teamcount))));
+                    useridtextMesh[teamuserlist[i][j].userID].rotation.x = -Math.PI / 2;
+                    useridtextMesh[teamuserlist[i][j].userID].rotation.z = -2 * Math.PI * (i/teamlist.length) + (Math.PI / 2);
+                    scene.add( useridtextMesh[teamuserlist[i][j].userID] );
+                }
+            }
+
+            // ----------------------------------------
+            // 3D Objects by Three.js
+            // ----------------------------------------
+            // Mesh Text TeamPointDisplays
+            // ----------------------------------------
+            var teampointGeoList = [];
+            var teampointMat = new THREE.MeshLambertMaterial();
+            teampointMat.transparent = true;
+            teampointMat.opacity = 1;
+            var teampointMesh = [];
+            for (i=0; i < teamlist.length; i++) {
+                teampointGeoList[teamlist[i]] = new THREE.TextGeometry( String(teampointlist[teamlist[i]]), {
+                    size: 80,
+                    curveSegments: 20,
+                    height: 1,
+                    bevelEnabled: false
+                });
+                teampointMesh[teamlist[i]] = new THREE.Mesh( teampointGeoList[teamlist[i]], teampointMat.clone() );
+
+                teampointMesh[teamlist[i]].position.set((teamboardradius+400) * Math.cos((2*Math.PI ) * (i/teamlist.length)), 550, (teamboardradius+400) * Math.sin((2*Math.PI ) * (i/teamlist.length)));
+                teampointMesh[teamlist[i]].rotation.y = -2 * Math.PI * (i/teamlist.length) + (Math.PI / 2);
+                scene.add( teampointMesh[teamlist[i]] );
+            }
+
+
+            // ---------------------------------------------------------------------
+            // Light
+            // ---------------------------------------------------------------------
+            var light = new THREE.DirectionalLight(0xffffff, 1);
+            light.position.set(-2000, 3000, 1500);
+            light.castShadow = true;
+            scene.add(light);
+            var ambient = new THREE.AmbientLight(0xaaaaaa);
+            scene.add(ambient);
+
+            // ---------------------------------------------------------------------
+            // Helper
+            // ---------------------------------------------------------------------
+            var grid = new THREE.GridHelper(10000, 60);
+            grid.setColors(0x171739, 0x171739);
+            scene.add(grid);
+
+            // ---------------------------------------------------------------------
+            // Rendering
+            // ---------------------------------------------------------------------
+            var renderer = new THREE.WebGLRenderer();
+            renderer.setSize(width, height);
+            renderer.setClearColor(0x051627);
+            renderer.shadowMapEnabled = true;
+            document.getElementById("stage").appendChild(renderer.domElement);
+
+            // ---------------------------------------------------------------------
+            // Controls
+            // ---------------------------------------------------------------------
+            var controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+            // ---------------------------------------------------------------------
+            // RenderingFunctions
+            // ---------------------------------------------------------------------
+            function render() {
+                requestAnimationFrame(render);
+
+                // ---------------------------------------------------------------------
+                // CameraAngre
+                // ---------------------------------------------------------------------
+                cameraRadian -= (Math.PI / 32) / 60;
+                if(camera_click_positions == 0){
+                    camera.position.set(4000 * Math.cos(cameraRadian), 1800, 4400 * Math.sin(cameraRadian));
+                }
+                else if(camera_click_positions == 1){
+                    camera.position.set(2200 * Math.cos(cameraRadian), 2100, 2600 * Math.sin(cameraRadian));
+                }
+
+                // ---------------------------------------------------------------------
+                // Effect Animation
+                // ---------------------------------------------------------------------
+                if (0 < animationList.length) {
+                    for (i=0; i < animationList.length; i++) {
+                        if (animationList[i][0] == 0) {
+                            animationList[i][1].position.x += animationList[i][2];
+                            animationList[i][1].position.z += animationList[i][3];
+                            animationList[i][1].position.y = 170 + Math.sqrt(Math.pow(((animationList[i][6] * Math.sqrt(2)) / 2), 2) - Math.pow((animationList[i][4] - (animationList[i][6] / 2)), 2)) - (animationList[i][6] / 2) + ((animationList[i][7] * animationList[i][4]) / animationList[i][6]);
+
+                            animationList[i][4] += animationList[i][5];
+                            animationList[i][8]++;
+                            if (60 < animationList[i][8]) {
+                                scene.remove(animationList[i][1]);
+                                animationList[i][1].material.dispose();
+                                animationList.splice(i, 1);
+                                i--;
+                            }
+                        }
+                        else if (animationList[i][0] == 1) {
+                            animationList[i][1].position.x += animationList[i][2];
+                            animationList[i][1].position.z += animationList[i][3];
+                            animationList[i][1].position.y = 200 + Math.sqrt(Math.pow(((animationList[i][6] * Math.sqrt(2)) / 2), 2) - Math.pow((animationList[i][4] - (animationList[i][6] / 2)), 2)) - (animationList[i][6] / 2) - ((animationList[i][7] * animationList[i][4]) / animationList[i][6]) + animationList[i][7];
+
+                            animationList[i][4] += animationList[i][5];
+                            animationList[i][8]++;
+                            if (60 < animationList[i][8]) {
+                                scene.remove(animationList[i][1]);
+                                animationList[i][1].material.dispose();
+                                animationList.splice(i, 1);
+                                i--;
+                            }
+                        }
+                        else if (animationList[i][0] == 2) {
+                            if (animationList[i][3] < 60) {
+                                if (animationList[i][3] % 6 == 0) {
+                                    teampointMesh[animationList[i][1]].material.opacity -= 0.1;
+                                }
+                                animationList[i][3]++;
+                            }
+                            else if (animationList[i][3] == 60) {
+                                teampointMesh[animationList[i][1]].geometry = new THREE.TextGeometry( animationList[i][2], {
+                                    size: 80,
+                                    curveSegments: 20,
+                                    height: 1,
+                                    bevelEnabled: false
+                                });
+                                animationList[i][3]++;
+                            }
+                            else if (60 < animationList[i][3] && animationList[i][3] <= 120) {
+                                teampointMesh[animationList[i][1]].material.opacity += 0.1;
+                                animationList[i][3]++;
+                            }
+                            else {
+                                animationList.splice(i, 1);
+                                i--;
+                            }
+                        }
+                    }
+                }
+
+                update();
+                renderer.render(scene, camera);
+            }
+            function update() {
+                controls.update();
+
+                for (i=0; i < teamcount; i++) {
+                    teamboardlist[i].material.uniforms.viewVector.value = new THREE.Vector3().subVectors( camera.position, teamboardlist[i].position );
+                }
+                for (i=0; i < questionpanel_firstcount; i++) {
+                    questionpanellist_first[i].material.uniforms.viewVector.value = new THREE.Vector3().subVectors( camera.position, questionpanellist_first[i].position );
+                }
+                for (i=0; i < questionpanel_secondcount; i++) {
+                    questionpanellist_second[i].material.uniforms.viewVector.value = new THREE.Vector3().subVectors( camera.position, questionpanellist_second[i].position );
+                }
+                for (i=0; i < questionpanel_thirdcount; i++) {
+                    questionpanellist_third[i].material.uniforms.viewVector.value = new THREE.Vector3().subVectors( camera.position, questionpanellist_third[i].position );
+                }
+
+                t2csphere.material.uniforms.viewVector.value = new THREE.Vector3().subVectors( camera.position, t2csphere.position );
+                t2csphereorbit.material.uniforms.viewVector.value = new THREE.Vector3().subVectors( camera.position, t2csphereorbit.position );
+            }
+            render();
+
+            // ---------------------------------------------------------------------
+            // OrbitRendering
+            // ---------------------------------------------------------------------
+            for (i=0; i < teamcount; i++) {
+                for (j=0; j < Math.floor(teampointlist[teamlist[i]] / 100); j++) {
+                    orbit_firstlist[teamlist[i]][j].material.color =  new THREE.Color( orbit_color[1] );
+                    orbit_firstlist[teamlist[i]][j].material.opacity = 1;
+                }
+            }
+
+            // ---------------------------------------------------------------------
+            // Actions
+            // ---------------------------------------------------------------------
+            $('#first_camera').click(function() {
+                camera_click_positions = 0;
+            });
+            $('#second_camera').click(function() {
+                camera_click_positions = 1;
+            });
+            $('#free_camera').click(function() {
+                camera_click_positions = 2;
+            });
+
+            var idnameModal = "";
+            $('.modalclick').on('click', function() {
+                idnameModal = $(this).attr("id");
+                idnameModal = "#" + idnameModal + "Modal";
+                $(idnameModal).modal();
+            });
+
+            var idnameflagSend = "";
+            var inputtext = "";
+            $('.flagSend').on('click', function() {
+                idnameflagSend = $(this).attr("id");
+                idnameflagSend = idnameflagSend.replace("send", "");
+                inputtext = "#" + idnameflagSend + "input";
+                inputtext = $(inputtext).val();
+
+                if (inputtext) {
+                    inputtext = yourdatalist[0] + ":" + yourdatalist[2] + ":" + idnameflagSend+ ":" + inputtext;
+                    console.log(inputtext);
+                    socket.emit("flagdata", inputtext);
+                }
+                else {
+                    console.log("empty");
+                }
+            });
+
+            $('.enter').keypress(function(e){
+                if(e.which == 13){
+                    idnameflagSend = "#" + $(this).attr("id");
+                    inputtext = $(idnameflagSend).val();
+                    idname = $(this).attr("id").replace("input", "");
+
+                    if (inputtext) {
+                        inputtext = yourdatalist[0] + ":" + yourdatalist[2] + ":" + idname + ":" + inputtext;
+                        console.log(inputtext);
+                        socket.emit("flagdata", inputtext);
+                    }
+                    else {
+                        alert("empty");
+                    }
+                }
+            });
+
+            var flagresult_jq = "";
+            socket.on("flagresulttext", function(data){
+
+                flagresult_jq = "#" + data[2] + "resulttext";
+                if (data[1] == 0) {
+                    $(flagresult_jq).text(data[0]);
+                    $(flagresult_jq).css('color', 'red');
+                    $(flagresult_jq).hide();
+                    $(flagresult_jq).fadeIn();
+                }
+                else {
+                    $(flagresult_jq).text(data[0]);
+                    $(flagresult_jq).css('color', 'green');
+                    $(flagresult_jq).hide();
+                    $(flagresult_jq).fadeIn();
+                }
+            });
+
+            socket.on("gliphiconIn", function(data) {
+                console.log(data);
+                var tempglistr = "#" + data[0] + "check";
+                var tempgli = $(tempglistr).html();
+                if (tempgli) {
+                    if (tempgli == '<i class="glyphicon glyphicon-exclamation-sign"></i>') {
+                        if (yourdatalist[0] == data[1]) {
+                            $(tempglistr).html('<i class="glyphicon glyphicon-thumbs-up"></i>');
+                            $(tempglistr).hide();
+                            $(tempglistr).fadeIn();
+                        }
+                        else if (yourdatalist[0] != data[1] && yourdatalist[2] == data[2]) {
+                            $(tempglistr).html('<i class="glyphicon glyphicon-ok"></i>');
+                            $(tempglistr).hide();
+                            $(tempglistr).fadeIn();
+                        }
+                    }
+                }
+                else {
+                    if (yourdatalist[0] == data[1]) {
+                        $(tempglistr).html('<i class="glyphicon glyphicon-flag"></i>');
+                        $(tempglistr).hide();
+                        $(tempglistr).fadeIn();
+                    }
+                    else if (yourdatalist[0] != data[1] && yourdatalist[2] == data[2]) {
+                        $(tempglistr).html('<i class="glyphicon glyphicon-ok"></i>');
+                        $(tempglistr).hide();
+                        $(tempglistr).fadeIn();
+                    }
+                    else {
+                        $(tempglistr).html('<i class="glyphicon glyphicon-exclamation-sign"></i>');
+                        $(tempglistr).hide();
+                        $(tempglistr).fadeIn();
+                    }
+                }
+            });
+
+            socket.on("pointModify", function(data) {
+                console.log(data);
+                console.log(teampointlist);
+                teampointlist[data[1]] += data[3];
+                console.log(teampointlist);
+
+                if (yourdatalist[2] == data[1]) {
+                    $('#yourteampoint').fadeOut(1000, function(){
+                        $('#yourteampoint').text(String(teampointlist[yourdatalist[2]]) + "pt");
+                        $('#yourteampoint').fadeIn(1000);
+                    });
+                }
+
+                animationList.push([2, data[1], String(teampointlist[data[1]]), 0]);
+
+                for (k=0; k < Math.floor(teampointlist[data[1]] / 100); k++) {
+                    if (30 <= k) {
+                        break;
+                    }
+                    orbit_firstlist[data[1]][k].material.color =  new THREE.Color( orbit_color[1] );
+                    orbit_firstlist[data[1]][k].material.opacity = 1;
+                }
+
+                for (i=0; i < usersdatalist.length; i++) {
+                    if (usersdatalist[i].userID == data[0]) {
+                        usersdatalist[i].point += data[3];
+
+                        for (j=0; j < userpanelList[data[1]].length; j++) {
+                            if (data[0] == userpanelList[data[1]][j].name) {
+                                if (300 <= usersdatalist[i].point && usersdatalist[i].point < 600) {
+                                    userpanelList[data[1]][j].material.color = new THREE.Color( userpanel_color[1] );
+                                    userpanelList_w[data[1]][j].material.color = new THREE.Color( userpanel_color[1] );
+                                }
+                                else if (600 <= usersdatalist[i].point && usersdatalist[i].point < 900) {
+                                    userpanelList[data[1]][j].material.color = new THREE.Color( userpanel_color[2] );
+                                    userpanelList_w[data[1]][j].material.color = new THREE.Color( userpanel_color[2] );
+                                }
+                                else if (900 <= usersdatalist[i].point && usersdatalist[i].point < 900) {
+                                    userpanelList[data[1]][j].material.color = new THREE.Color( userpanel_color[3] );
+                                    userpanelList_w[data[1]][j].material.color = new THREE.Color( userpanel_color[3] );
+                                }
+                                else if (1200 <= usersdatalist[i].point) {
+                                    userpanelList[data[1]][j].material.color = new THREE.Color( userpanel_color[4] );
+                                    userpanelList_w[data[1]][j].material.color = new THREE.Color( userpanel_color[4] );
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // ---------------------------------------------------------------------
+            // Functions
+            // ---------------------------------------------------------------------
+
+            // ---------------------------------
+            // Functions
+            // ---------------------------------------------------------------------
+            // PacketAnimationCreate
+            // ---------------------------------------------------------------------
+            var packetg = new THREE.BoxGeometry(12, 12, 12);
+            var packetm = new THREE.MeshLambertMaterial({color: "white"});
+            packetm.transparent = true;
+            packetm.opacity = 1;
+
+            function packetCreateStoD(s, d) {
+                var packetobj = new THREE.Mesh(packetg.clone(), packetm.clone());
+                packetobj.position.x = s.x;
+                packetobj.position.y = s.y;
+                packetobj.position.z = s.z;
+
+                scene.add(packetobj);
+
+                var ax = (d.x - s.x) / 60;
+                var az = (d.z - s.z) / 60;
+                var a_y = 0;
+                var aybase = (Math.sqrt(Math.pow((d.x - s.x), 2) + Math.pow((d.z - s.z), 2))) / 60;
+                var aydist = (Math.sqrt(Math.pow((d.x - s.x), 2) + Math.pow((d.z - s.z), 2)));
+                var aydest = d.y - 170;
+
+                animationList.push([0, packetobj, ax, az, a_y, aybase, aydist, aydest, 0]);
+            }
+            function packetCreateDtoS(s, d) {
+                var packetobj = new THREE.Mesh(packetg.clone(), packetm.clone());
+                packetobj.position.x = s.x;
+                packetobj.position.y = s.y;
+                packetobj.position.z = s.z;
+
+                scene.add(packetobj);
+
+                var ax = (d.x - s.x) / 60;
+                var az = (d.z - s.z) / 60;
+                var a_y = 0;
+                var aybase = (Math.sqrt(Math.pow((d.x - s.x), 2) + Math.pow((d.z - s.z), 2))) / 60;
+                var aydist = (Math.sqrt(Math.pow((d.x - s.x), 2) + Math.pow((d.z - s.z), 2)));
+                var aydest = s.y - 160;
+
+                animationList.push([1, packetobj, ax, az, a_y, aybase, aydist, aydest, 0]);
+            }
+
+
+            socket.on("packetanimation", function(data) {
+                if (data[2] == 0) {
+                    packetCreateStoD(eachobjectPositionsList[data[0]], eachobjectPositionsList[data[1]]);
+                }
+                else {
+                    packetCreateDtoS(eachobjectPositionsList[data[0]], eachobjectPositionsList[data[1]]);
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>

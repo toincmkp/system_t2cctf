@@ -1,0 +1,28 @@
+#team_list{
+    margin: 0px 50px 0px;
+    border: red 1px inset;
+    font-size: 14px;
+}
+
+#url_appear{
+    margin: 0px 50px 50px;
+    border: green 1px inset;
+    font-size: 17px;
+}
+
+table{
+    text-align: center;
+}
+
+th{
+    width: 90px;
+    text-align: center;
+}
+
+
+/*
+.team_inline{
+    display: inline-block;
+}
+*/
+

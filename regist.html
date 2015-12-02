@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <title>Regist page</title>
+        <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+    </head>
+
+<body>
+    <script src="js/jquery-1.11.2.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+
+    <nav class="navbar navbar-default">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/">T2C CTF</a>
+        </div>
+        <ul class="nav navbar-nav navbar-right" style="margin-right: 10px;">
+            <li><a href="/">Top</a></li>
+            <li class="active"><a href="/regist">Regist</a></li>
+            <li><a href="/login">Login</a></li>
+        </ul>
+    </nav>
+
+    <div align="center" style="margin-top: 100px">
+        <p><img src="imgs/welcome.png"></p>
+    </div>
+
+    <div align="center" style="margin-top: 20px">
+        <p><img src="imgs/signup.png"></p>
+    </div>
+    <div align="center" style="margin-top: 0px">
+        <form method="post" action="">
+            <p>User ID : <input type="text" name="userid"></p>
+            <p>Password : <input type="password" name="passwd" required></p>
+            <p>Team ID : <input type="text" name="teamid" required></p>
+            <p>E-mail : <input type="email" name="email" required></p>
+
+            <p><input type="submit" value="send"></p>
+    </div>
+
+</body>
+</html>
