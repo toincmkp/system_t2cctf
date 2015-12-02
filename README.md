@@ -15,7 +15,7 @@
 ### このページの概要
 このページは、第二回 T2CCTF で使われた各種ソースと環境構築、実行方法を説明するページとなります。  
 また[先のページ](https://totti-t2cctf.github.io)は T2CCTF で用いられた [three.js](http://threejs.org) によるフラグの送受信を3Dで可視化するページのデモとなります。  
-※デモページでは実際にフラグの送受信は行なっておりません。デモページのソースは[こちら](http://github.com/totti-t2cctf/p_system_t2cctf)から！  
+※デモページでは実際にフラグの送受信は行なっておりません。デモページのソースは[こちら](http://github.com/totti-t2cctf/totti-t2cctf.gihub.io)から！  
 
 さらに自身がここまでの知識や技術を身につけるまでの小さなプログラム群によるソースと簡易説明も用意しましたので是非こちらもご覧ください。  
 [Node.js(各種モジュールを含む), MongoDB, Three.js 簡易入門ページ](https://github.com/totti-t2cctf/basic_t2cctf)  
