@@ -601,14 +601,12 @@ io.sockets.on('connection', function(socket){
     // Threed board page
     // --------------------------------------------------------------------------------------
     socket.on("flagdata", function(data) {
-        console.log(data);
         data = data.split(":");
         console.log(data);
         io.sockets.emit("packetanimation", [data[0], data[2], 0]);
         var sha1flagdata = crypto.createHash('sha1');
         sha1flagdata.update(data[3]);
         var flagdata = sha1flagdata.digest('hex');
-        console.log(flagdata);
 
         MongoClient.connect("mongodb://localhost/t2cctfdb", function(err, db){
             if(err){return console.dir(err);}
@@ -626,20 +624,16 @@ io.sockets.on('connection', function(socket){
                     if(0 < items.length){
                         db.collection("correct_ans_log", function(err, collectionlog){
                             collectionlog.find({teamID: data[1], qID: data[2]}).toArray(function(err, items2){
-                                console.log(items2);
                                 if(0 < items2.length){
                                     console.log("userID:" + data[0] + " is confirming the " + data[2] + " flag now.");
                                 }
                                 else {
                                     io.sockets.emit("ataridayo", ["userID : " + data[0] + ", " + "teamID : " + data[1] + ", " + "qID : " + data[2] + ", " + "Flag : " + data[3]]);
-                                    console.log("kokodayoooo");
                                     var objDate = new Date();
                                     var time = objDate.getTime();
                                     var docs2 = [{teamID: data[1], userID: data[0], qID: data[2], flag: data[3], timestamp: time}];
 
                                     collectionlog.insert(docs2, function(err, result) {
-                                        console.log("items :");
-                                        console.log(items);
                                         io.sockets.emit("gliphiconIn", [data[2], data[0], data[1]]);
 
                                         db.collection("members", function(err, collectionloglog) {
@@ -657,7 +651,6 @@ io.sockets.on('connection', function(socket){
                         socket.emit("flagresulttext", resultlist);
                     }
                     else{
-                        console.log("nanimonaiyo");
                         var resulttext = "Oops... " + data[3] + " is wrong.";
                         var resultlist = [resulttext, 0, data[2]];
                         socket.emit("flagresulttext", resultlist);
