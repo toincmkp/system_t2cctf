@@ -29,17 +29,17 @@
 
 ### その他のT2CCTF における実装情報
 PCのスペック次第では 3D の処理自体が厳しいため T2CCTF では先の 3D の可視化システムのみ除いたページも用意しました。  
-![challenges](https://github.com/totti-t2cctf/other_t2cctf/imgs/challenges.png)  
+![challenges](https://raw.githubusercontent.com/totti-t2cctf/other_t2cctf/master/imgs/challenges.png)  
 
 またユーザーやチームなどの登録やセッション管理等も Node.js によって実装しています。  
 簡易的なスコア表示ページも用意していました。  
-![scoreboard](https://github.com/totti-t2cctf/other_t2cctf/imgs/scoreboard.png)  
+![scoreboard](https://raw.githubusercontent.com/totti-t2cctf/other_t2cctf/master/imgs/scoreboard.png)  
 
 TOPページやダッシュボード等の画像はこちらから　↓  
-<a href="https://github.com/totti-t2cctf/other_t2cctf/imgs/top.png" target="\_blank">Top ページ</a>  
-<a href="https://github.com/totti-t2cctf/other_t2cctf/imgs/login.png" target="\_blank">Login ページ</a>  
-<a href="https://github.com/totti-t2cctf/other_t2cctf/imgs/regist.png" target="\_blank">Regist ページ</a>  
-<a href="https://github.com/totti-t2cctf/other_t2cctf/imgs/dashboard.png" target="\_blank">Dashboard ページ</a>  
+<a href="https://raw.githubusercontent.com/totti-t2cctf/other_t2cctf/master/imgs/top.png" target="_blank">Top ページ</a>  
+<a href="https://raw.githubusercontent.com/totti-t2cctf/other_t2cctf/master/imgs/login.png" target="_blank">Login ページ</a>  
+<a href="https://raw.githubusercontent.com/totti-t2cctf/other_t2cctf/master/imgs/regist.png" target="_blank">Regist ページ</a>  
+<a href="https://raw.githubusercontent.com/totti-t2cctf/other_t2cctf/master/imgs/dashboard.png" target="_blank">Dashboard ページ</a>  
 
 T2CCTF 各種機能一覧は[簡易入門ページ](https://github.com/totti-t2cctf/basic_t2cctf)でご確認ください。
 
