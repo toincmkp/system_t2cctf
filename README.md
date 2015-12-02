@@ -59,10 +59,10 @@ T2CCTF 各種機能一覧は[簡易入門ページ](https://github.com/totti-t2c
 バージョンアップによる使用の変更等はご自身でご確認ください。
 
 ###### 今回使用しているもの（バージョンや細かいものは後述）
-* OS : Ubuntu 14.04 LTS 64bit版 日本語  
-* Node.js
-* MongoDB
-* three.js (r71)
+* OS           : Ubuntu 14.04 LTS 64bit版 日本語  
+* 言語         : Node.js
+* データベース : MongoDB
+* WebGL        : three.js (r71)
 
 ###### バージョン情報
 ```
